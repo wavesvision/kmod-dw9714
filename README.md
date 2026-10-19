@@ -11,19 +11,23 @@ motor at I2C address 0x0c. The Raspberry Pi kernel image does not ship the
 ## Install
 
 ```sh
+sudo rm -rf /usr/src/dw9714-0.1.0
 sudo cp -a . /usr/src/dw9714-0.1.0
 sudo dkms add -m dw9714 -v 0.1.0
 sudo dkms build -m dw9714 -v 0.1.0
 sudo dkms install -m dw9714 -v 0.1.0
 ```
 
-Then enable the VCM in the OX05B1S overlay:
+Then enable the VCM in the OX05B1S overlay. In `/boot/firmware/config.txt`,
+under `[pi5]`:
 
 ```
 dtoverlay=ox05b1s,cam0,4lane,vcm
+camera_auto_detect=0
 ```
 
-and reboot. Verify with:
+Use `cam1` instead of `cam0` if the camera is on the other connector, then
+reboot. Verify with:
 
 ```sh
 dmesg | grep -i dw9714
@@ -46,8 +50,12 @@ the lens subdevice automatically and moves the focus with the arrow keys:
 Use a specific subdevice or a different arrow step if needed:
 
 ```sh
-./focus-console.py --device /dev/v4l-subdev3 --step 8
+./focus-console.py --device /dev/v4l-subdevN --step 8
 ```
+
+The default auto-detection finds the `dw9714` entity through `media-ctl`, so
+normally no device argument is needed. Use the lens subdevice that exposes
+`focus_absolute` if you specify one manually.
 
 Controls:
 

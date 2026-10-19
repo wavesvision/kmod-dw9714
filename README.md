@@ -33,3 +33,38 @@ v4l2-ctl -d /dev/v4l-subdev<N> --list-ctrls
 
 The lens entity must have function `MEDIA_ENT_F_LENS` and the subdevice must
 expose `focus_absolute` with a range of 0-1023.
+
+## Interactive focus console
+
+`focus-console.py` provides an interactive terminal UI for the VCM. It finds
+the lens subdevice automatically and moves the focus with the arrow keys:
+
+```sh
+./focus-console.py
+```
+
+Use a specific subdevice or a different arrow step if needed:
+
+```sh
+./focus-console.py --device /dev/v4l-subdev3 --step 8
+```
+
+Controls:
+
+| Key | Action |
+| --- | --- |
+| Up / Down | Move focus by 16 (or `--step`) |
+| `+` / `-` | Move focus by 1 |
+| Page Up / Page Down | Move by 8x the step |
+| `r` | Reset to the control default |
+| `q` | Quit |
+
+The script keeps the subdevice open while it runs, so the VCM stays powered
+and the lens remains at the selected position. When the script exits, the
+driver parks the lens at 0 and remembers the last value. The next time the
+device is opened, the driver ramps back to that value.
+
+Stop libcamera or set the autofocus mode to manual while using the console,
+otherwise the AF algorithm will move the lens independently.
+
+Dependencies: `python3` and `v4l-utils` (`v4l2-ctl`).

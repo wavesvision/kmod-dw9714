@@ -10,6 +10,15 @@ motor at I2C address 0x0c. The Raspberry Pi kernel image does not ship the
 
 ## Install
 
+Install the build tools and kernel headers first:
+
+```sh
+sudo apt install dkms build-essential
+sudo apt install raspberrypi-kernel-headers || sudo apt install linux-headers-$(uname -r)
+```
+
+Then install the DKMS package:
+
 ```sh
 sudo rm -rf /usr/src/dw9714-0.1.0
 sudo cp -a . /usr/src/dw9714-0.1.0
